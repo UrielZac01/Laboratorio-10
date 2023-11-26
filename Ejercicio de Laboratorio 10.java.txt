@@ -1,0 +1,70 @@
+import java.io.*;
+import java.util.Arrays;
+
+public class Alumno implements Serializable {
+    private String nombre;
+    private String boleta;
+    private String correoElectronico;
+    private String numeroCelular;
+    private double[][] calificaciones;
+
+    public Alumno(String nombre, String boleta, String correoElectronico, String numeroCelular, double[][] calificaciones) {
+        this.nombre = nombre;
+        this.boleta = boleta;
+        this.correoElectronico = correoElectronico;
+        this.numeroCelular = numeroCelular;
+        this.calificaciones = calificaciones;
+    }
+
+    public void exportarTexto(String nombreArchivo) {
+        try (ObjectOutputStream salida = new ObjectOutputStream(new FileOutputStream(nombreArchivo))) {
+            salida.writeObject(this);
+            System.out.println("Datos exportados correctamente a " + nombreArchivo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Alumno[] importarTexto(String nombreArchivo) {
+        Alumno[] alumnos = null;
+        try (ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(nombreArchivo))) {
+            alumnos = new Alumno[3];
+            for (int i = 0; i < 3; i++) {
+                alumnos[i] = (Alumno) entrada.readObject();
+            }
+            System.out.println("Datos importados correctamente desde " + nombreArchivo);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return alumnos;
+    }
+
+    public static void main(String[] args) {
+        
+        double[][] calificaciones1 = {{1, 95.5}, {2, 87.0}, {3, 91.2}};
+        double[][] calificaciones2 = {{1, 78.5}, {2, 89.0}, {3, 94.7}};
+        double[][] calificaciones3 = {{1, 85.0}, {2, 92.3}, {3, 88.1}};
+
+        Alumno alumno1 = new Alumno("Juan", "2023567865", "juanhdz@hotmail.com", "5635691833", calificaciones1);
+        Alumno alumno2 = new Alumno("Maria", "20190315445", "maria_876@gmail.com", "5584751437", calificaciones2);
+        Alumno alumno3 = new Alumno("Pedro", "2023630845", "pedroiz@gmail.com", "5567345623", calificaciones3);
+
+        
+        alumno1.exportarTexto("alumno1");
+        alumno2.exportarTexto("alumno2");
+        alumno3.exportarTexto("alumno3");
+
+        Alumno[] alumnos = Alumno.importarTexto("alumno1");
+
+        if (alumnos != null) {
+            for (Alumno alumno : alumnos) {
+                System.out.println("Nombre: " + alumno.nombre);
+                System.out.println("Boleta: " + alumno.boleta);
+                System.out.println("Correo Electrónico: " + alumno.correoElectronico);
+                System.out.println("Número Celular: " + alumno.numeroCelular);
+                System.out.println("Calificaciones: " + Arrays.deepToString(alumno.calificaciones));
+                System.out.println();
+            }
+        }
+    }
+}
